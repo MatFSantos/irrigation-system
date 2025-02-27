@@ -128,8 +128,6 @@ void update_display() {
     char temp[20], hmd[20];
     snprintf(temp,20,"%.0f", temperature);
     snprintf(hmd,20,"%.0f", humidity);
-    printf("temperatura: %s\n", temp);
-    printf("umidade: %s\n", hmd);
     ssd1306_fill(&ssd, false);
     ssd1306_rect(&ssd, 0, 0, 128, 64, true, false);
     ssd1306_draw_string(&ssd,"temp",3,3);
@@ -219,8 +217,7 @@ int main (){
     while (1) {
         read_temperature(0);
         read_humidity(1);
-        printf("temperatura: %f\n", temperature);
-        printf("umidade: %f\n", humidity);
+        printf("temperatura: %f\t | umidade: %f\n", temperature, humidity);
         if (humidity < 30.0){ // plantas ornamentais deve está com a humidade entre 30% e 50%
             pwm_set_gpio_level(PIN_RED_LED, PWM_WRAP/2);
             ws2812b_plot(ws,&SAD);
