@@ -164,7 +164,7 @@ int64_t turn_off_callback(alarm_id_t id, void *user_data) {
  */
 void gpio_irq_handler(uint gpio, uint32_t event) {
     uint32_t current_time = to_ms_since_boot(get_absolute_time());
-    if(current_time - last_time >= 200) { // debounce
+    if(current_time - last_time >= 400) { // debounce
         if (gpio == PIN_BUTTON_A){
             manual_mode = !manual_mode; // ativa/desativa modo manual da bomba
             if (manual_mode){
