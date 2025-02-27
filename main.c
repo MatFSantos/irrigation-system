@@ -182,12 +182,10 @@ void gpio_irq_handler(uint gpio, uint32_t event) {
 
 int main (){
     PIO pio = pio0;
-    bool ok;
-    uint16_t x = 0, y = 0, x_led_level = 0, y_led_level = 0;
 
     // set clock freq to 128MHz
-    ok = set_sys_clock_khz(128000, false);
-    if (ok) printf("clock set to %ld\n", clock_get_hz(clk_sys));
+    if (set_sys_clock_khz(128000, false))
+        printf("clock set to %ld\n", clock_get_hz(clk_sys));
 
     // init gpios and stdio functions
     stdio_init_all();
@@ -215,10 +213,12 @@ int main (){
     sleep_ms(50);
 
     while (1) {
+        //ler sensores
         read_temperature(0);
         read_humidity(1);
         printf("temperatura: %f\t | umidade: %f\n", temperature, humidity);
-        if (humidity < 30.0){ // plantas ornamentais deve está com a humidade entre 30% e 50%
+
+        if (humidity < 30.0){ // abaixo de 30% é recomendado apenas para cactos e suculentas (plantas com baixo gasto de agua)
             pwm_set_gpio_level(PIN_RED_LED, PWM_WRAP/2);
             ws2812b_plot(ws,&SAD);
             if(!manual_mode && !bomb_state) {
@@ -226,11 +226,11 @@ int main (){
                 set_irrigation(bomb_state);
             }
         }
-        else if (humidity < 40.0) {
+        else if (humidity < 40.0) { // mostra um rosto neutro quando entre 30 e 40%
             pwm_set_gpio_level(PIN_RED_LED, 0);
             ws2812b_plot(ws,&NEUTRAL);
         }
-        else if (humidity >= 40.0){
+        else if (humidity >= 40.0){ // acima de 40% é um bom nível
             pwm_set_gpio_level(PIN_RED_LED, 0);
             ws2812b_plot(ws,&SMILE);
             if(!manual_mode && bomb_state) {
